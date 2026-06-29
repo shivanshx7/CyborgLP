@@ -21,7 +21,7 @@ export default function App() {
     const frameImages = [] ;
     for (let i = 1 ; i <= TOTAL_FRAMES ; i++){
       const img = new Image()
-      img.src = `src/frames/ezgif-frame-${String(i).padStart(3,"0")}.png`
+      img.src = `frames/ezgif-frame-${String(i).padStart(3,"0")}.png`
       frameImages.push(img)
     }
     setImages(frameImages)
