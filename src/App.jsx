@@ -17,15 +17,35 @@ export default function App() {
   const canvasRef = useRef(null)
   const [images, setImages] = useState([])
 
-  useEffect(()=>{
-    const frameImages = [] ;
-    for (let i = 1 ; i <= TOTAL_FRAMES ; i++){
-      const img = new Image()
-      img.src = `frames/ezgif-frame-${String(i).padStart(3,"0")}.png`
-      frameImages.push(img)
-    }
-    setImages(frameImages)
-  },[])
+  useEffect(() => {
+  let loadedCount = 0;
+  const frameImages = [];
+
+  // This auto-detects Vite or Create React App base paths, defaulting to an absolute "/"
+  const baseUrl = import.meta.env?.BASE_URL || process.env?.PUBLIC_URL || "/";
+  // Make sure we don't double up slashes if baseUrl ends with one
+  const cleanBase = baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`;
+
+  for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    const img = new Image();
+    
+    // 1. Point to the absolute root path via public directory
+    img.src = `${cleanBase}frames/ezgif-frame-${String(i).padStart(3, "0")}.png`;
+    
+    img.onload = () => {
+      loadedCount++;
+      if (loadedCount === TOTAL_FRAMES) {
+        setImages(frameImages);
+      }
+    };
+
+    img.onerror = () => {
+      console.error(`Deployment failed to find image asset at: ${img.src}`);
+    };
+
+    frameImages.push(img);
+  }
+}, []);
 
   useEffect(()=>{
     if (images.length === 0) return;
